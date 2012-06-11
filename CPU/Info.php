@@ -26,10 +26,13 @@ class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
 
         $cwd = '/tmp';
 
+        /**
+         * There is no difference in ps output between OSX (Darwin) and Linux.
+         * That's why we don't have low level routines in SystemSupport for this.
+         */
         $proc = proc_open(
-            'ps -C -eo pid,pcpu,comm', $descriptorspec, $pipes, $cwd, null
+            'ps -eo pid,pcpu,command', $descriptorspec, $pipes, $cwd, null
         );
-
 
         foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
             if (stristr($line, 'PID')) continue;
@@ -37,25 +40,29 @@ class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
             preg_match('/^(.{5})\s(.{5})\s(.*)$/', $line, $stats);
 
             $pid  = isset($stats[1]) ? (int)$stats[1] : null;
-            $pcpu = isset($stats[2]) ? (float)$stats[2] : null;
+            $pcpu = isset($stats[2]) ? (float)$stats[2] / $this->_cpuCores : null;
             $prog = isset($stats[3]) ? (string)$stats[3] : null;
 
             $cpuStats['pcpu'] += $pcpu;
+
+            if ($pcpu >= 1) {
+                // anything below 1% cpu utilization is not of interest...
+                if (isset($cpuStats['prog'][$prog])) {
+                    $cpuStats['prog'][$prog] += $pcpu;
+                } else {
+                    $cpuStats['prog'][$prog] = $pcpu;
+                }
+            }
         }
 
         $procResult = proc_close($proc);
 
         if ($procResult == 0) {
-            $cpuStats['pcpu'] = $cpuStats['pcpu']/$this->_cpuCores;
+            $cpuStats['pcpu'] = $cpuStats['pcpu'] / $this->_cpuCores;
 
             return $cpuStats;
         }
 
         return array();
-    }
-
-    private function _getCpuNumber()
-    {
-
     }
 }
