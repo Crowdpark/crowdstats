@@ -10,21 +10,10 @@ namespace crowdstats\CPU;
 class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
 {
     /**
-     *
-     */
-    public function __construct()
-    {
-        $this->_osType = PHP_OS;
-
-    }
-
-    /**
      * @return int|mixed
      */
     public function getStats()
     {
-        die($this->_osType);
-
         $cpuStats = array(
             'pcpu' => 0
         );
@@ -57,10 +46,10 @@ class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
         $procResult = proc_close($proc);
 
         if ($procResult == 0) {
+            $cpuStats['pcpu'] = $cpuStats['pcpu']/$this->_cpuCores;
+
             return $cpuStats;
         }
-
-        die($procResult);
 
         return array();
     }

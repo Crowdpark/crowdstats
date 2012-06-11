@@ -5,6 +5,9 @@
  * Date: 08.06.12
  * Time: 18:09
  * To change this template use File | Settings | File Templates.
+ *
+ * You need this class only if you use crowdstats stand alone.
+ *
  */
 namespace crowdstats;
 class Bootstrap

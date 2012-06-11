@@ -16,3 +16,5 @@ $data = $cpStats->getStats();
 var_dump($data);
 
 echo $cpStats->getOsType() . PHP_EOL;
+
+var_dump($cpStats);

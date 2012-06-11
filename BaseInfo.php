@@ -12,16 +12,40 @@ class BaseInfo
     /**
      * @var
      */
-    private $_osType;
+    protected $_osType;
     /**
      * @var
      */
-    private $_cpuType;
+    protected $_cpuType;
     /**
      * @var
      */
-    private $_cpuCores;
+    protected $_cpuCores;
 
+    /**
+     * @var
+     */
+    protected $_hostname;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->_osType = PHP_OS;
+        $systemSupport = null;
+
+        try {
+            eval("\$systemSupport = new \\crowdstats\\SystemSupport\\$this->_osType();");
+        } catch (\Exception $e) {
+            echo('FATAL: SystemSupport Init Failed! (' . $e->getMessage() . ')');
+            die('non recoverable...');
+        }
+
+        $this->_cpuCores = $systemSupport->getCpuCores();
+        $this->_hostname = $systemSupport->getHostname();
+        $this->_cpuType  = null;
+    }
 
     /**
      * @return
@@ -46,5 +70,14 @@ class BaseInfo
     {
         return $this->_osType;
     }
+
+    /**
+     * @return
+     */
+    public function getHostname()
+    {
+        return $this->_hostname;
+    }
 }
+
 //EOF
