@@ -6,8 +6,8 @@
  * Time: 14:13
  * To change this template use File | Settings | File Templates.
  */
-namespace crowdstats\CPU;
-class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
+namespace Crowdstats\CPU;
+class Info extends \Crowdstats\BaseInfo implements \Crowdstats\InterfaceInfo
 {
     /**
      * @return int|mixed
@@ -27,7 +27,7 @@ class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
         $cwd = '/tmp';
 
         /**
-         * There is no difference in ps output between OSX (Darwin) and Linux.
+         * There is mostly no difference in ps output between OSX (Darwin) and Linux.
          * That's why we don't have low level routines in SystemSupport for this.
          */
         $proc = proc_open(
@@ -37,11 +37,15 @@ class Info extends \crowdstats\BaseInfo implements \crowdstats\InterfaceInfo
         foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
             if (stristr($line, 'PID')) continue;
 
-            preg_match('/^(.{5})\s(.{5})\s(.*)$/', $line, $stats);
+            preg_match('/^(.{5})\s+([0-9\.]*)?\s(.*)$/', $line, $stats);
 
             $pid  = isset($stats[1]) ? (int)$stats[1] : null;
-            $pcpu = isset($stats[2]) ? (float)$stats[2] / $this->_cpuCores : null;
+            $pcpu = isset($stats[2]) ? (float)$stats[2] : null;
             $prog = isset($stats[3]) ? (string)$stats[3] : null;
+
+            if ($this->_osType == 'Darwin') {
+                $pcpu = $pcpu / $this->_cpuCores;
+            }
 
             $cpuStats['pcpu'] += $pcpu;
 

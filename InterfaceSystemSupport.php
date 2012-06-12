@@ -6,7 +6,7 @@
  * Time: 10:01
  * To change this template use File | Settings | File Templates.
  */
-namespace crowdstats;
+namespace Crowdstats;
 interface InterfaceSystemSupport
 {
     /**

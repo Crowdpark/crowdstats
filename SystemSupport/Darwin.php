@@ -6,8 +6,8 @@
  * Time: 10:00
  * To change this template use File | Settings | File Templates.
  */
-namespace crowdstats\SystemSupport;
-class Darwin implements \crowdstats\InterfaceSystemSupport
+namespace Crowdstats\SystemSupport;
+class Darwin implements \Crowdstats\InterfaceSystemSupport
 {
     /**
      * @return mixed

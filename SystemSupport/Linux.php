@@ -6,8 +6,8 @@
  * Time: 10:09
  * To change this template use File | Settings | File Templates.
  */
-namespace crowdstats\SystemSupport;
-class Linux implements \crowdstats\InterfaceSystemSupport
+namespace Crowdstats\SystemSupport;
+class Linux implements \Crowdstats\InterfaceSystemSupport
 {
 
     /**

@@ -7,9 +7,9 @@
  * To change this template use File | Settings | File Templates.
  */
 include('./Bootstrap.php');
-$bootstrap = new \crowdstats\Bootstrap();
+$bootstrap = new \Crowdstats\Bootstrap();
 
-$cpStats = new crowdstats\CPU\Info();
+$cpStats = new \Crowdstats\CPU\Info();
 
 $data = $cpStats->getStats();
 

@@ -6,7 +6,7 @@
  * Time: 14:08
  * To change this template use File | Settings | File Templates.
  */
-namespace crowdstats;
+namespace Crowdstats;
 class BaseInfo
 {
     /**
@@ -36,7 +36,7 @@ class BaseInfo
         $systemSupport = null;
 
         try {
-            eval("\$systemSupport = new \\crowdstats\\SystemSupport\\$this->_osType();");
+            eval("\$systemSupport = new \\Crowdstats\\SystemSupport\\$this->_osType();");
         } catch (\Exception $e) {
             echo('FATAL: SystemSupport Init Failed! (' . $e->getMessage() . ')');
             die('non recoverable...');
