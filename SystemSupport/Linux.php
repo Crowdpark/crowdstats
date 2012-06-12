@@ -37,5 +37,14 @@ namespace Crowdstats\SystemSupport {
 
             return $ctime - $btime;
         }
+
+        /**
+         * @return mixed
+         */
+        public function getNetStats()
+        {
+            // TODO: Implement getNetStats() method.
+        }
+
     }
 }

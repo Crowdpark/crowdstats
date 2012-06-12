@@ -26,5 +26,11 @@ namespace Crowdstats {
          * @return mixed
          */
         public function getUptime();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getNetStats();
     }
 }

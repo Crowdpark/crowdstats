@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats {
-    interface InterfaceInfo extends InterfaceSystemSupport
+    interface InterfaceSystemInfo extends InterfaceSystemSupport
     {
         /**
          * @abstract

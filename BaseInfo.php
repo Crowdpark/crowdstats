@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats {
-    class BaseInfo
+    class BaseInfo implements \Crowdstats\InterfaceSystemSupport
     {
         /**
          * @var
@@ -97,6 +97,16 @@ namespace Crowdstats {
         {
             $this->_uptime = $this->_systemSupport->getUptime();
             return (int)$this->_uptime;
+        }
+
+        /**
+         * @param int $sampleTime
+         *
+         * @return mixed
+         */
+        public function getNetStats($sampleTime = 0)
+        {
+            return $this->_systemSupport->getNetStats();
         }
     }
 }

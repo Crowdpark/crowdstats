@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats\System {
-    class Info extends \Crowdstats\BaseInfo implements \Crowdstats\InterfaceInfo
+    class Info extends \Crowdstats\BaseInfo implements \Crowdstats\InterfaceSystemInfo
     {
         /**
          * @return int|mixed
