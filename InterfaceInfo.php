@@ -6,12 +6,13 @@
  * Time: 14:02
  * To change this template use File | Settings | File Templates.
  */
-namespace Crowdstats;
-interface InterfaceInfo
-{
-    /**
-     * @abstract
-     * @return mixed
-     */
-    public function getStats();
+namespace Crowdstats {
+    interface InterfaceInfo extends InterfaceSystemSupport
+    {
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getCpuStats();
+    }
 }

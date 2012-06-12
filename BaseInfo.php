@@ -6,77 +6,98 @@
  * Time: 14:08
  * To change this template use File | Settings | File Templates.
  */
-namespace Crowdstats;
-class BaseInfo
-{
-    /**
-     * @var
-     */
-    protected $_osType;
-    /**
-     * @var
-     */
-    protected $_cpuType;
-    /**
-     * @var
-     */
-    protected $_cpuCores;
-
-    /**
-     * @var
-     */
-    protected $_hostname;
-
-    /**
-     *
-     */
-    public function __construct()
+namespace Crowdstats {
+    class BaseInfo
     {
-        $this->_osType = PHP_OS;
-        $systemSupport = null;
+        /**
+         * @var
+         */
+        private $_systemSupport;
 
-        try {
-            eval("\$systemSupport = new \\Crowdstats\\SystemSupport\\$this->_osType();");
-        } catch (\Exception $e) {
-            echo('FATAL: SystemSupport Init Failed! (' . $e->getMessage() . ')');
-            die('non recoverable...');
+        /**
+         * @var
+         */
+        protected $_osType;
+        /**
+         * @var
+         */
+        protected $_cpuType;
+        /**
+         * @var
+         */
+        protected $_cpuCores;
+
+        /**
+         * @var
+         */
+        protected $_hostname;
+
+        /**
+         * @var
+         */
+        protected $_uptime;
+
+        /**
+         *
+         */
+        public function __construct()
+        {
+            $this->_osType  = PHP_OS;
+            $this->_cpuType = null;
+
+            try {
+                eval("\$this->_systemSupport = new \\Crowdstats\\SystemSupport\\$this->_osType();");
+            } catch (\Exception $e) {
+                echo('FATAL: SystemSupport Init Failed! (' . $e->getMessage() . ')');
+                die('non recoverable...');
+            }
+
+            $this->_cpuCores = $this->_systemSupport->getCpuCores();
+            $this->_hostname = $this->_systemSupport->getHostname();
+            $this->_uptime   = $this->_systemSupport->getUptime();
         }
 
-        $this->_cpuCores = $systemSupport->getCpuCores();
-        $this->_hostname = $systemSupport->getHostname();
-        $this->_cpuType  = null;
-    }
+        /**
+         * @return
+         */
+        public function getCpuCores()
+        {
+            return $this->_cpuCores;
+        }
 
-    /**
-     * @return
-     */
-    public function getCpuCores()
-    {
-        return $this->_cpuCores;
-    }
+        /**
+         * @return
+         */
+        public function getCpuType()
+        {
+            return $this->_cpuType;
+        }
 
-    /**
-     * @return
-     */
-    public function getCpuType()
-    {
-        return $this->_cpuType;
-    }
+        /**
+         * @return
+         */
+        public function getOsType()
+        {
+            return $this->_osType;
+        }
 
-    /**
-     * @return
-     */
-    public function getOsType()
-    {
-        return $this->_osType;
-    }
+        /**
+         * @return
+         */
+        public function getHostname()
+        {
+            $this->_hostname = $this->_systemSupport->getHostname();
+            return $this->_hostname;
+        }
 
-    /**
-     * @return
-     */
-    public function getHostname()
-    {
-        return $this->_hostname;
+        /**
+         * @return int
+         */
+        public function getUptime()
+        {
+            $this->_uptime = $this->_systemSupport->getUptime();
+            return (int)$this->_uptime;
+        }
     }
 }
 
