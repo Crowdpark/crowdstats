@@ -1,20 +1,13 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: finger
- * Date: 08.06.12
- * Time: 17:58
- * To change this template use File | Settings | File Templates.
- */
+include('./InterfaceBootstrap');
 include('./Bootstrap.php');
-$bootstrap = new \Crowdstats\Bootstrap();
 
-$cpStats = new \Crowdstats\CPU\Info();
+\Crowdstats\Bootstrap::getInstance()->init(); //Autoloader Init
 
-$data = $cpStats->getStats();
+$systemInfo = new \Crowdstats\System\Info(); // Class Init
 
-var_dump($data);
+$netStats = $systemInfo->getNetStats(); // Network stats
 
-echo $cpStats->getOsType() . PHP_EOL;
+$cpuStats = $systemInfo->getCpuStats(); // current CPU utilization
 
-var_dump($cpStats);
+//EOF
