@@ -38,6 +38,16 @@ namespace Crowdstats {
         protected $_uptime;
 
         /**
+         * @var
+         */
+        protected $_netBytesIn;
+
+        /**
+         * @var
+         */
+        protected $_netBytesOut;
+
+        /**
          *
          */
         public function __construct()
@@ -55,6 +65,11 @@ namespace Crowdstats {
             $this->_cpuCores = $this->_systemSupport->getCpuCores();
             $this->_hostname = $this->_systemSupport->getHostname();
             $this->_uptime   = $this->_systemSupport->getUptime();
+
+            $netStats = $this->getNetStats(0);
+
+            $this->_netBytesIn  = $netStats['traffic']['bytes_in'];
+            $this->_netBytesOut = $netStats['traffic']['bytes_out'];
         }
 
         /**
@@ -107,6 +122,22 @@ namespace Crowdstats {
         public function getNetStats($sampleTime = 0)
         {
             return $this->_systemSupport->getNetStats();
+        }
+
+        /**
+         * @return
+         */
+        public function getNetBytesIn()
+        {
+            return $this->_netBytesIn;
+        }
+
+        /**
+         * @return
+         */
+        public function getNetBytesOut()
+        {
+            return $this->_netBytesOut;
         }
     }
 }

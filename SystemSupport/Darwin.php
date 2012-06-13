@@ -42,19 +42,19 @@ namespace Crowdstats\SystemSupport {
          */
         public function getNetStats()
         {
-            $data      = array('interfaces' => array(), 'traffic' => array( 'in' => 0, 'out' => 0));
+            $data      = array('interfaces' => array(), 'traffic' => array( 'bytes_in' => 0, 'bytes_out' => 0));
             $dataNames = array(
                 'interface',
                 'mtu',
                 'ref',
                 'mac_addr',
-                'Ipkts',
-                'Ierrs',
-                'Ibytes',
-                'Opkts',
-                'Oerrs',
-                'Obytes',
-                'Coll'
+                'pkts_in',
+                'errs_in',
+                'bytes_in',
+                'pkts_out',
+                'errs_out',
+                'bytes_out',
+                'collision_counter'
             );
 
             $descriptorspec = array(
@@ -76,13 +76,21 @@ namespace Crowdstats\SystemSupport {
                     $temp            = array_combine($dataNames, $stats);
                     $temp['ip_addr'] = exec('ifconfig ' . escapeshellarg($temp['interface']) . ' | grep \'inet \' | sed -E \'s/.*inet ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*/\1/\'');
 
-                    if ($temp['ip_addr'] != '' && !stristr($temp['ip_addr'], '127.')) {
+                    if ($temp['ip_addr'] != '' && ! preg_match('/^127\./', $temp['ip_addr'])) {
+                        // we are not interested in loopback device/localhost data...
                         $data['interfaces'][$temp['interface']] = $temp;
+
+                        $data['traffic']['bytes_in'] += (int) $temp['bytes_in'];
+                        $data['traffic']['bytes_out'] += (int) $temp['bytes_out'];
                     }
                 }
             }
 
             $procResult = proc_close($proc);
+
+            if($procResult !== 0){
+                error_log('ERROR: netstat was not OK!');
+            }
 
             return $data;
         }
