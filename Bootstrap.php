@@ -35,7 +35,7 @@ namespace Crowdstats {
                 }
                 else {
                     // I hope one of the other autoloaders will find that!!!
-                    error_log("[[$className] = [$classFile]] not found, but there are other autoloaders registered!");
+                    // error_log("[[$className] = [$classFile]] not found, but there are other autoloaders registered!");
                 }
             }
             else {

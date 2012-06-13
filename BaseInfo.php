@@ -121,7 +121,9 @@ namespace Crowdstats {
          */
         public function getNetStats($sampleTime = 0)
         {
-            return $this->_systemSupport->getNetStats();
+            $data = $this->_systemSupport->getNetStats();
+            // TODO: gathering info for $sampleTime and compute in/out per sec...
+            return $data;
         }
 
         /**
