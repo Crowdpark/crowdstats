@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats\SystemSupport {
-    class Darwin implements \Crowdstats\InterfaceSystemSupport
+    class Darwin implements \Crowdstats\InterfaceSystemInfo
     {
         /**
          * @return mixed
@@ -70,10 +70,13 @@ namespace Crowdstats\SystemSupport {
             );
 
             foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
-                if (!stristr($line, 'Link')) continue; // filter out non device stats lines...
+                if (!stristr($line, 'Link')) continue;
+
                 $stats = preg_split('/\s+/', $line);
+
                 if (count($stats) == count($dataNames)) {
                     $temp            = array_combine($dataNames, $stats);
+                    $temp['interface'] = preg_replace('/\*/', '', $temp['interface']);
                     $temp['ip_addr'] = exec('ifconfig ' . escapeshellarg($temp['interface']) . ' | grep \'inet \' | sed -E \'s/.*inet ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*/\1/\'');
 
                     if ($temp['ip_addr'] != '' && ! preg_match('/^127\./', $temp['ip_addr'])) {

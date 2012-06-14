@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats\SystemSupport {
-    class Linux implements \Crowdstats\InterfaceSystemSupport
+    class Linux implements \Crowdstats\InterfaceSystemInfo
     {
 
         /**

@@ -10,5 +10,7 @@ namespace Crowdstats {
     interface InterfaceBootstrap
     {
         public function init();
+
+        public static function getInstance();
     }
 }

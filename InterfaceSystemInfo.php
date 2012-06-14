@@ -7,12 +7,30 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats {
-    interface InterfaceSystemInfo extends InterfaceSystemSupport
+    interface InterfaceSystemInfo
     {
         /**
          * @abstract
          * @return mixed
          */
-        public function getCpuStats();
+        public function getHostname();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getCpuCores();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getUptime();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getNetStats();
     }
 }

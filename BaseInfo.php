@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 namespace Crowdstats {
-    class BaseInfo implements \Crowdstats\InterfaceSystemSupport
+    class BaseInfo implements \Crowdstats\InterfaceBaseInfo
     {
         /**
          * @var
@@ -18,14 +18,21 @@ namespace Crowdstats {
          * @var
          */
         protected $_osType;
+
         /**
          * @var
          */
         protected $_cpuType;
+
         /**
          * @var
          */
         protected $_cpuCores;
+
+        /**
+         * @var
+         */
+        protected $_cpuUsage;
 
         /**
          * @var
@@ -48,6 +55,11 @@ namespace Crowdstats {
         protected $_netBytesOut;
 
         /**
+         * @var
+         */
+        protected $_monitor;
+
+        /**
          *
          */
         public function __construct()
@@ -66,43 +78,51 @@ namespace Crowdstats {
             $this->_hostname = $this->_systemSupport->getHostname();
             $this->_uptime   = $this->_systemSupport->getUptime();
 
-            $netStats = $this->getNetStats(0);
+            $netStats = $this->getNetStats();
 
             $this->_netBytesIn  = $netStats['traffic']['bytes_in'];
             $this->_netBytesOut = $netStats['traffic']['bytes_out'];
+
+            $timestamp = time();
+
+            $this->_monitor = array(
+                "{$timestamp}" => array(
+
+                )
+            );
         }
 
         /**
-         * @return
+         * @return int|mixed
          */
         public function getCpuCores()
         {
-            return $this->_cpuCores;
+            return (int)$this->_cpuCores;
         }
 
         /**
-         * @return
+         * @return string
          */
         public function getCpuType()
         {
-            return $this->_cpuType;
+            return (string)$this->_cpuType;
         }
 
         /**
-         * @return
+         * @return string
          */
         public function getOsType()
         {
-            return $this->_osType;
+            return (string)$this->_osType;
         }
 
         /**
-         * @return
+         * @return mixed|string
          */
         public function getHostname()
         {
             $this->_hostname = $this->_systemSupport->getHostname();
-            return $this->_hostname;
+            return (string)$this->_hostname;
         }
 
         /**
@@ -117,29 +137,94 @@ namespace Crowdstats {
         /**
          * @param int $sampleTime
          *
-         * @return mixed
+         * @return array|mixed
          */
         public function getNetStats($sampleTime = 0)
         {
             $data = $this->_systemSupport->getNetStats();
-            // TODO: gathering info for $sampleTime and compute in/out per sec...
-            return $data;
+
+            if ($sampleTime == 0) {
+                return (array)$data;
+            }
+
+            sleep((int)$sampleTime);
+
+            $newData = $this->_systemSupport->getNetStats();
+
+            print_r($newData);
         }
 
         /**
-         * @return
+         * @return int
          */
         public function getNetBytesIn()
         {
-            return $this->_netBytesIn;
+            return (int)$this->_netBytesIn;
         }
 
         /**
-         * @return
+         * @return int
          */
         public function getNetBytesOut()
         {
-            return $this->_netBytesOut;
+            return (int)$this->_netBytesOut;
+        }
+
+        /**
+         * @return array|mixed
+         */
+        public function getCpuStats()
+        {
+            $cpuStats = array(
+                'pcpu' => 0
+            );
+
+            $descriptorspec = array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("file", "/dev/null", "a"),
+            );
+
+            $cwd = '/tmp';
+
+            /**
+             * There is mostly not much difference in ps output between OSX (Darwin) and Linux.
+             * That's why we don't need low level routines in SystemSupport for this.
+             */
+            $proc = proc_open(
+                'ps -eo pid,pcpu,command', $descriptorspec, $pipes, $cwd, null
+            );
+
+            foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
+                if (stristr($line, 'PID')) continue;
+
+                preg_match('/^(.{5})\s+([0-9\.]*)?\s(.*)$/', $line, $stats);
+
+                $pid  = isset($stats[1]) ? (int)$stats[1] : null;
+                $pcpu = isset($stats[2]) ? (float)$stats[2] : null;
+                $prog = isset($stats[3]) ? (string)$stats[3] : null;
+
+                if ($this->_osType == 'Darwin') {
+                    $pcpu = $pcpu / $this->_cpuCores;
+                }
+
+                $cpuStats['pcpu'] += $pcpu;
+
+                if ($pcpu >= 1) {
+                    // anything below 1% cpu utilization is not of interest...
+                    if (isset($cpuStats['prog'][$prog])) {
+                        $cpuStats['prog'][$prog] += $pcpu;
+                    } else {
+                        $cpuStats['prog'][$prog] = $pcpu;
+                    }
+                }
+            }
+
+            if (proc_close($proc) !== 0) {
+                error_log('ERROR: Possible problem with ps info @ getCpuStats...');
+            }
+
+            return (array)$cpuStats;
         }
     }
 }
