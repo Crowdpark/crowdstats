@@ -150,5 +150,15 @@ namespace Crowdstats\SystemSupport {
 
             return $data;
         }
+
+        /**
+         * @return array|mixed
+         */
+        public function getMemStats()
+        {
+            return array();
+        }
+
     }
 }
+//EOF

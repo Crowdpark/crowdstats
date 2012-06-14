@@ -42,7 +42,7 @@ namespace Crowdstats\SystemSupport {
          */
         public function getNetStats()
         {
-            $data      = array('interfaces' => array(), 'traffic' => array( 'bytes_in' => 0, 'bytes_out' => 0));
+            $data      = array('interfaces' => array(), 'traffic' => array('bytes_in' => 0, 'bytes_out' => 0));
             $dataNames = array(
                 'interface',
                 'mtu',
@@ -75,27 +75,44 @@ namespace Crowdstats\SystemSupport {
                 $stats = preg_split('/\s+/', $line);
 
                 if (count($stats) == count($dataNames)) {
-                    $temp            = array_combine($dataNames, $stats);
+                    $temp              = array_combine($dataNames, $stats);
                     $temp['interface'] = preg_replace('/\*/', '', $temp['interface']);
-                    $temp['ip_addr'] = exec('ifconfig ' . escapeshellarg($temp['interface']) . ' | grep \'inet \' | sed -E \'s/.*inet ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*/\1/\'');
+                    $temp['ip_addr']   = exec('ifconfig ' . escapeshellarg($temp['interface']) . ' | grep \'inet \' | sed -E \'s/.*inet ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*/\1/\'');
 
-                    if ($temp['ip_addr'] != '' && ! preg_match('/^127\./', $temp['ip_addr'])) {
+                    if ($temp['ip_addr'] != '' && !preg_match('/^127\./', $temp['ip_addr'])) {
                         // we are not interested in loopback device/localhost data...
                         $data['interfaces'][$temp['interface']] = $temp;
 
-                        $data['traffic']['bytes_in'] += (int) $temp['bytes_in'];
-                        $data['traffic']['bytes_out'] += (int) $temp['bytes_out'];
+                        $data['traffic']['bytes_in'] += (int)$temp['bytes_in'];
+                        $data['traffic']['bytes_out'] += (int)$temp['bytes_out'];
                     }
                 }
             }
 
             $procResult = proc_close($proc);
 
-            if($procResult !== 0){
+            if ($procResult !== 0) {
                 error_log('ERROR: netstat was not OK!');
             }
 
             return $data;
+        }
+
+        /**
+         * @return array|mixed
+         */
+        public function getMemStats()
+        {
+            $totalMem = (int)exec('sysctl -n hw.memsize');
+            $userMem  = (int)exec('sysctl -n hw.usermem');
+            $physMem  = (int)exec('sysctl -n hw.physmem');
+            $freeMem  = $totalMem - ($userMem + $physMem);
+
+            return array(
+                'totalBytes' => $totalMem,
+                'freeBytes'  => $freeMem,
+                'usedBytes'  => $totalMem - $freeMem,
+            );
         }
     }
 }

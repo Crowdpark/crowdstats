@@ -32,5 +32,11 @@ namespace Crowdstats {
          * @return mixed
          */
         public function getNetStats();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getMemStats();
     }
 }

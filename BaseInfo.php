@@ -37,6 +37,21 @@ namespace Crowdstats {
         /**
          * @var
          */
+        protected $_ramTotal;
+
+        /**
+         * @var
+         */
+        protected $_ramFree;
+
+        /**
+         * @var
+         */
+        protected $_ramUsed;
+
+        /**
+         * @var
+         */
         protected $_hostname;
 
         /**
@@ -64,8 +79,7 @@ namespace Crowdstats {
          */
         public function __construct()
         {
-            $this->_osType  = PHP_OS;
-            $this->_cpuType = null;
+            $this->_osType = PHP_OS;
 
             try {
                 eval("\$this->_systemSupport = new \\Crowdstats\\SystemSupport\\$this->_osType();");
@@ -74,22 +88,31 @@ namespace Crowdstats {
                 die('non recoverable...');
             }
 
+            $this->_monitor = array();
+
+            $this->_updateStats();
+        }
+
+        /**
+         *
+         */
+        protected function _updateStats()
+        {
+            $this->_cpuType  = null;
             $this->_cpuCores = $this->_systemSupport->getCpuCores();
             $this->_hostname = $this->_systemSupport->getHostname();
             $this->_uptime   = $this->_systemSupport->getUptime();
 
             $netStats = $this->getNetStats();
+            $cpuStats = $this->getCpuStats();
+            $memStats = $this->getMemStats();
 
             $this->_netBytesIn  = $netStats['traffic']['bytes_in'];
             $this->_netBytesOut = $netStats['traffic']['bytes_out'];
-
-            $timestamp = time();
-
-            $this->_monitor = array(
-                "{$timestamp}" => array(
-
-                )
-            );
+            $this->_cpuUsage    = $cpuStats['pcpu'];
+            $this->_ramFree     = $memStats['freeBytes'];
+            $this->_ramTotal    = $memStats['totalBytes'];
+            $this->_ramUsed     = $memStats['usedBytes'];
         }
 
         /**
@@ -149,9 +172,8 @@ namespace Crowdstats {
 
             sleep((int)$sampleTime);
 
-            $newData = $this->_systemSupport->getNetStats();
-
-            print_r($newData);
+            //TODO: implement sampling via $sampleTime...
+            return (array)$data;
         }
 
         /**
@@ -226,6 +248,65 @@ namespace Crowdstats {
 
             return (array)$cpuStats;
         }
+
+        /**
+         * @return float
+         */
+        public function getCpuUsage()
+        {
+            return (float)$this->_cpuUsage;
+        }
+
+        /**
+         * @return array
+         */
+        public function getMonitor()
+        {
+            return (array)$this->_monitor;
+        }
+
+        /**
+         * @return int
+         */
+        public function getRamFree()
+        {
+            return (int)$this->_ramFree;
+        }
+
+        /**
+         * @return int
+         */
+        public function getRamTotal()
+        {
+            return (int)$this->_ramTotal;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getMemStats($sampleTime = 0)
+        {
+            $data = $this->_systemSupport->getMemStats();
+
+            if ($sampleTime == 0) {
+                return (array)$data;
+            }
+
+            sleep((int)$sampleTime);
+
+            //TODO: implement sampling via $sampleTime...
+            return (array)$data;
+        }
+
+        /**
+         * @return
+         */
+        public function getRamUsed()
+        {
+            return $this->_ramUsed;
+        }
+
+
     }
 }
 
