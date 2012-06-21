@@ -103,8 +103,6 @@ namespace Crowdstats\SystemSupport {
          */
         public function getMemStats()
         {
-            // TODO: change to 'sysctl hw | grep mem' -- better to fetch memory info in just one call!
-
             $descriptorspec = array(
                 0 => array("pipe", "r"),
                 1 => array("pipe", "w"),
@@ -132,6 +130,12 @@ namespace Crowdstats\SystemSupport {
                             break;
                     }
                 }
+            }
+
+            $procResult = proc_close($proc);
+
+            if ($procResult !== 0) {
+                error_log('ERROR: netstat was not OK!');
             }
 
             $freeMem = $totalMem - ($userMem + $physMem);
