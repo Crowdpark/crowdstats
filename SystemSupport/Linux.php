@@ -156,7 +156,17 @@ namespace Crowdstats\SystemSupport {
          */
         public function getMemStats()
         {
-            return array();
+            $memInfo = (string)exec('free -b | grep Mem');
+            preg_match('/Mem\:\s+(\d+)\s+(\d+)\s+(\d+).*/', $memInfo, $match);
+            $totalMem = (int)$match[1];
+            $usedMem  = (int)$match[2];
+            $freeMem  = (int)$match[3];
+
+            return array(
+                'totalBytes' => $totalMem,
+                'freeBytes'  => $freeMem,
+                'usedBytes'  => $usedMem,
+            );
         }
 
     }

@@ -27,8 +27,6 @@ namespace Crowdstats\System {
 
             $timestamp = microtime(true);
 
-            echo('update @ ' . $timestamp . PHP_EOL);
-
             $this->_monitor["{$timestamp}"] = array(
                 'networkBytesIn'  => $this->_netBytesIn,
                 'networkBytesOut' => $this->_netBytesOut,
@@ -39,9 +37,18 @@ namespace Crowdstats\System {
             );
         }
 
-        public function results()
+        /**
+         *
+         */
+        public function prStats()
         {
+            $prHead = true;
             foreach ($this->_monitor as $timestamp => $data) {
+                if ($prHead) {
+                    $statNames = array_keys($data);
+                    printf('%s = %s' . PHP_EOL, 'timestamp', implode(':', $statNames));
+                    $prHead = false;
+                }
                 printf('%s = %s' . PHP_EOL, date('Y-m-d, H:i:s', $timestamp), implode(':', $data));
             }
         }

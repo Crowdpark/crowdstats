@@ -103,6 +103,7 @@ namespace Crowdstats\SystemSupport {
          */
         public function getMemStats()
         {
+            // TODO: change to 'sysctl hw | grep mem' -- better to fetch memory info in just one call!
             $totalMem = (int)exec('sysctl -n hw.memsize');
             $userMem  = (int)exec('sysctl -n hw.usermem');
             $physMem  = (int)exec('sysctl -n hw.physmem');
