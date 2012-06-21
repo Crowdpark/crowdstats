@@ -104,10 +104,37 @@ namespace Crowdstats\SystemSupport {
         public function getMemStats()
         {
             // TODO: change to 'sysctl hw | grep mem' -- better to fetch memory info in just one call!
-            $totalMem = (int)exec('sysctl -n hw.memsize');
-            $userMem  = (int)exec('sysctl -n hw.usermem');
-            $physMem  = (int)exec('sysctl -n hw.physmem');
-            $freeMem  = $totalMem - ($userMem + $physMem);
+
+            $descriptorspec = array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("file", "/dev/null", "a"),
+            );
+
+            $cwd = '/tmp';
+
+            $proc = proc_open(
+                'sysctl hw', $descriptorspec, $pipes, $cwd, null
+            );
+
+            foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
+                $match = array();
+                if (preg_match('/(hw.physmem|hw.usermem|hw.memsize)\s+=\s+(\d+)/', $line, $match)) {
+                    switch ($match[1]) {
+                        case 'hw.physmem':
+                            $physMem = (int)$match[2];
+                            break;
+                        case 'hw.usermem':
+                            $userMem = (int)$match[2];
+                            break;
+                        case 'hw.memsize':
+                            $totalMem = (int)$match[2];
+                            break;
+                    }
+                }
+            }
+
+            $freeMem = $totalMem - ($userMem + $physMem);
 
             return array(
                 'totalBytes' => $totalMem,
