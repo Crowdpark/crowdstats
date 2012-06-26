@@ -2,19 +2,30 @@
 include('./InterfaceBootstrap.php');
 include('./Bootstrap.php');
 
-\Crowdstats\Bootstrap::getInstance()->init(); //Autoloader Init
+\Crowdstats\Bootstrap::getInstance()->init();
+$systemMonitor = new \Crowdstats\System\Monitor();
 
-$systemInfo = new \Crowdstats\System\Info(); // Class Init
+$systemMonitor->update(); // store system information for later use...
 
-$netStats = $systemInfo->getNetStats(); // Network stats
+$cpuStats = $systemMonitor->getCpuStats();
 
-var_dump($netStats);
+$systemMonitor->update(); // store system information for later use...
 
-$cpuStats = $systemInfo->getCpuStats(); // current CPU utilization
+echo('---- system stats -----' . PHP_EOL);
+printf('system cpu utilization is: %.2f%% - CPU cores = %d' . PHP_EOL, $cpuStats['pcpu'], $systemMonitor->getCpuCores());
+printf('system uptime: %d sec. (%s)' . PHP_EOL, $systemMonitor->getUptime(), date('Y-m-d, H:i:s', time() - $systemMonitor->getUptime()));
+printf('network bytes in:  %d' . PHP_EOL, $systemMonitor->getNetBytesIn());
+printf('network bytes out: %d' . PHP_EOL, $systemMonitor->getNetBytesOut());
 
-var_dump($cpuStats);
+$systemMonitor->update(); // store system information for later use...
 
-$sysUptime = $systemInfo->getUptime(); // system uptime in seconds since last boot...
+echo('disk usage:' . PHP_EOL);
+$diskUsage = $systemMonitor->getDiskUsage();
+print_r($diskUsage);
 
+$systemMonitor->update(); // store system information for later use...
+
+echo('monitor:' . PHP_EOL);
+$systemMonitor->prStats();
 
 //EOF
