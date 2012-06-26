@@ -38,5 +38,17 @@ namespace Crowdstats {
          * @return mixed
          */
         public function getMemStats();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getDiskStats();
+
+        /**
+         * @abstract
+         * @return mixed
+         */
+        public function getDiskUsage();
     }
 }

@@ -75,6 +75,16 @@ namespace Crowdstats {
         protected $_monitor;
 
         /**
+         * @var
+         */
+        protected $_diskUsage;
+
+        /**
+         * @var
+         */
+        protected $_diskStats;
+
+        /**
          *
          */
         public function __construct()
@@ -306,7 +316,23 @@ namespace Crowdstats {
             return $this->_ramUsed;
         }
 
+        /**
+         * @return mixed
+         */
+        public function getDiskStats()
+        {
+            $this->_diskStats = $this->_systemSupport->getDiskStats();
+            return $this->_diskStats;
+        }
 
+        /**
+         * @return mixed
+         */
+        public function getDiskUsage()
+        {
+            $this->_diskUsage = $this->_systemSupport->getDiskUsage();
+            return $this->_diskUsage;
+        }
     }
 }
 

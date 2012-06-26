@@ -169,6 +169,22 @@ namespace Crowdstats\SystemSupport {
             );
         }
 
+        /**
+         * @return mixed
+         */
+        public function getDiskStats()
+        {
+            // TODO: Implement getDiskStats() method.
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getDiskUsage()
+        {
+            // TODO: Implement getDiskUsage() method.
+        }
+
     }
 }
 //EOF
