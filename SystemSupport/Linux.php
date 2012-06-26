@@ -182,7 +182,48 @@ namespace Crowdstats\SystemSupport {
          */
         public function getDiskUsage()
         {
-            // TODO: Implement getDiskUsage() method.
+            $data = array();
+
+            $descriptorspec = array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("file", "/dev/null", "a"),
+            );
+
+            $cwd = '/tmp';
+
+            $proc = proc_open(
+                'df -kl', $descriptorspec, $pipes, $cwd, null
+            );
+
+            foreach (preg_split('/\n/', stream_get_contents($pipes[1])) as $line) {
+                $match = array();
+                if (preg_match('#^/dev/(\w+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\%\s+(/.*)$#', $line, $match)) {
+                    $volDevice     = $match[1];
+                    $volSizeKb     = $match[2];
+                    $volUsedKb     = $match[3];
+                    $volFreeKb     = $match[4];
+                    $volUsageP     = $match[5];
+                    $volMountpoint = $match[6];
+
+                    $data["{$volDevice}"] = array(
+                        'volSizeKb'    => $volSizeKb,
+                        'volUsedKb'    => $volUsedKb,
+                        'volFreeKb'    => $volFreeKb,
+                        'volUsageP'    => $volUsageP,
+                        'volMountpoint'=> $volMountpoint,
+                        'volDevice'    => $volDevice
+                    );
+                }
+            }
+
+            $procResult = proc_close($proc);
+
+            if ($procResult !== 0) {
+                error_log('ERROR: df was not OK!');
+            }
+
+            return $data;
         }
 
     }

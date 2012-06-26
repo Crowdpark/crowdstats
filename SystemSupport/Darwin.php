@@ -190,6 +190,7 @@ namespace Crowdstats\SystemSupport {
                         'volFreeKb'    => $volFreeKb,
                         'volUsageP'    => $volUsageP,
                         'volMountpoint'=> $volMountpoint,
+                        'volDevice'    => $volDevice
                     );
                 }
             }

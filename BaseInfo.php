@@ -309,29 +309,29 @@ namespace Crowdstats {
         }
 
         /**
-         * @return
+         * @return int
          */
         public function getRamUsed()
         {
-            return $this->_ramUsed;
+            return (int)$this->_ramUsed;
         }
 
         /**
-         * @return mixed
+         * @return array|mixed
          */
         public function getDiskStats()
         {
             $this->_diskStats = $this->_systemSupport->getDiskStats();
-            return $this->_diskStats;
+            return (array)$this->_diskStats;
         }
 
         /**
-         * @return mixed
+         * @return array|mixed
          */
         public function getDiskUsage()
         {
             $this->_diskUsage = $this->_systemSupport->getDiskUsage();
-            return $this->_diskUsage;
+            return (array)$this->_diskUsage;
         }
     }
 }
