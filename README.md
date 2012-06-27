@@ -9,6 +9,7 @@ Some things which we really wanna know.
 * Config free runtime
 * Automatic OS detection
 * Autoloader
+* [PHP Profiling via xhprof](http://php.net/manual/en/intro.xhprof.php)
 
 ***Provides***
 --------------
@@ -18,10 +19,43 @@ Some things which we really wanna know.
 * Network utilization and information
 * Disk usage
 
+***Dependencies***
+
+[xhprof @ pecl](http://pecl.php.net/package/xhprof)
+
+Installation:
+
+    $ pecl config-set preferred_state beta
+    $ pecl install xhprof
+    $ pecl config-set preferred_state stable
+
+The config switch might not be necessary. Just in case pecl refuses to install xhprof.
+
 ***Usage example***
 -------------------
 
-Look at [test.php](https://github.com/Crowdpark/crowdstats/blob/master/test.php)
+Look at [test.php](https://github.com/Crowdpark/crowdstats/blob/master/test.php) for general examples
+
+Look at [profiling.php](https://github.com/Crowdpark/crowdstats/blob/master/profiling.php) for profiling.
+
+***Classes***
+-------------
+
+Crowdstats\System\Info
+----------------------
+
+Basic functionality/access to all system information methods (no profiling).
+
+Crowdstats\System\Monitor
+-------------------------
+
+Adding monitoring features to gather system usage over time (includes profiling informtaion if enabled)
+
+Crowdstats\System\Profiling
+---------------------------
+
+Like the basic Info-Class. This is the fastest way to gather PHP profiling information.
+
 
 ***TODO list***
 ---------------

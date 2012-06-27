@@ -89,6 +89,16 @@ namespace Crowdstats {
          */
         public function __construct()
         {
+            $this->_systemInit();
+
+            $this->_updateStats();
+        }
+
+        /**
+         *
+         */
+        protected function _systemInit()
+        {
             $this->_osType = PHP_OS;
 
             try {
@@ -99,8 +109,6 @@ namespace Crowdstats {
             }
 
             $this->_monitor = array();
-
-            $this->_updateStats();
         }
 
         /**
