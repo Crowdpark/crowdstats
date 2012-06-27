@@ -9,7 +9,6 @@ Some things which we really wanna know.
 * Config free runtime
 * Automatic OS detection
 * Autoloader
-* [PHP Profiling via xhprof](http://php.net/manual/en/intro.xhprof.php)
 
 ***Provides***
 --------------
@@ -18,6 +17,7 @@ Some things which we really wanna know.
 * Memory usage
 * Network utilization and information
 * Disk usage
+* [PHP Profiling via xhprof](http://php.net/manual/en/intro.xhprof.php)
 
 ***Dependencies***
 
@@ -30,6 +30,8 @@ Installation:
     $ pecl config-set preferred_state stable
 
 The config switch might not be necessary. Just in case pecl refuses to install xhprof.
+
+If you still encounter problems (like 'Cannot find config.m4.') have a look at [this](http://stojg.se/blog/2011-08-27-install-xhprof-for-php5-on-centos-ubuntu-and-debian)
 
 ***Usage example***
 -------------------
@@ -54,8 +56,7 @@ Adding monitoring features to gather system usage over time (includes profiling 
 Crowdstats\System\Profiling
 ---------------------------
 
-Like the basic Info-Class. This is the fastest way to gather PHP profiling information.
-
+Like the basic Info-Class. This is the fastest way to gather PHP profiling information. Profiling is only available if you have installed the extension via pecl as mentioned above. If the library is not installed, it won't crash your app. It will just ignore your requests.
 
 ***TODO list***
 ---------------

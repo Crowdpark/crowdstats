@@ -17,7 +17,7 @@ namespace Crowdstats\System {
         /**
          * @var array
          */
-        private $_xhprofData = array();
+        private $_profilingData = array();
 
         /**
          * @param bool $do_not_start_profiling_now
@@ -35,7 +35,7 @@ namespace Crowdstats\System {
         }
 
         /**
-         *
+         * @return Profiling
          */
         function start()
         {
@@ -43,36 +43,46 @@ namespace Crowdstats\System {
                 xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY + XHPROF_FLAGS_NO_BUILTINS);
                 $this->_xhprof_on = true;
             }
+
+            return $this;
         }
 
         /**
-         *
+         * @return Profiling
          */
         function stop()
         {
             if (is_callable('xhprof_disable') && $this->_xhprof_on === true) {
-                $this->_xhprofData = xhprof_disable();
+                $this->_profilingData = xhprof_disable();
                 $this->_xhprof_on  = false;
             }
+
+            return $this;
         }
 
         /**
+         * @param array $profilingData
          *
+         * @return Profiling
          */
-        function prData()
+        function prData($profilingData = array())
         {
+            $profilingData = (is_array($profilingData) && count($profilingData) >= 1) ? $profilingData : $this->_profilingData;
+
             printf(
                 '%50s %4s %7s %7s %7s %7s' . PHP_EOL,
                 'Function/Method', 'ct', 'wt (s)', 'cpu (s)', 'mu', 'pmu'
             );
 
-            foreach ($this->_xhprofData as $fName => $fData) {
+            foreach ($profilingData as $fName => $fData) {
                 $pfName = preg_replace('/.*?==>(.*)/', '$1', $fName);
                 printf(
                     '%50s %4d %7.4f %7.4f %7d %7d' . PHP_EOL,
                     substr($pfName, 0, 50), $fData['ct'], $fData['wt'] / 1000000, $fData['cpu'] / 1000000, $fData['mu'], $fData['pmu']
                 );
             }
+
+            return $this;
         }
 
         /**
@@ -84,9 +94,9 @@ namespace Crowdstats\System {
          * mu  = memory usage
          * pmu = peak memory usage
          */
-        public function getXhprofData()
+        public function getProfilingData()
         {
-            return $this->_xhprofData;
+            return $this->_profilingData;
         }
     }
 }
