@@ -40,6 +40,8 @@ Look at [test.php](https://github.com/Crowdpark/crowdstats/blob/master/test.php)
 
 Look at [profiling.php](https://github.com/Crowdpark/crowdstats/blob/master/profiling.php) for profiling.
 
+[phpUnit test](https://github.com/Crowdpark/crowdstats/blob/master/testCrowdstats.php)
+
 ***Classes***
 -------------
 

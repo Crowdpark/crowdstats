@@ -116,7 +116,7 @@ namespace Crowdstats {
          */
         protected function _updateStats()
         {
-            $this->_cpuType  = null;
+            $this->_cpuType  = '';
             $this->_cpuCores = $this->_systemSupport->getCpuCores();
             $this->_hostname = $this->_systemSupport->getHostname();
             $this->_uptime   = $this->_systemSupport->getUptime();
@@ -188,9 +188,9 @@ namespace Crowdstats {
                 return (array)$data;
             }
 
+            //TODO: implement sampling via $sampleTime...
             sleep((int)$sampleTime);
 
-            //TODO: implement sampling via $sampleTime...
             return (array)$data;
         }
 
@@ -300,7 +300,9 @@ namespace Crowdstats {
         }
 
         /**
-         * @return mixed
+         * @param int $sampleTime
+         *
+         * @return array|mixed
          */
         public function getMemStats($sampleTime = 0)
         {
@@ -310,9 +312,9 @@ namespace Crowdstats {
                 return (array)$data;
             }
 
+            //TODO: implement sampling via $sampleTime...
             sleep((int)$sampleTime);
 
-            //TODO: implement sampling via $sampleTime...
             return (array)$data;
         }
 

@@ -30,15 +30,13 @@ namespace Crowdstats {
             $classFile = APPLICATION_ROOT . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $pathArray) . '.php';
 
             if (!file_exists($classFile)) {
-                if(count(spl_autoload_functions()) == 1) {
+                if (count(spl_autoload_functions()) == 1) {
                     throw new \Exception("[[$className] = [$classFile]] not found, Bootstrap::_autoload failed!");
-                }
-                else {
+                } else {
                     // I hope one of the other autoloaders will find that!!!
                     // error_log("[[$className] = [$classFile]] not found, but there are other autoloaders registered!");
                 }
-            }
-            else {
+            } else {
                 include $classFile;
             }
         }
@@ -51,7 +49,14 @@ namespace Crowdstats {
             ini_set('display_errors', '1');
             error_reporting(E_ALL | E_STRICT);
 
-            define('APPLICATION_ROOT', dirname(__FILE__));
+            if (!defined('APPLICATION_ROOT')) {
+                if (defined('APPLICATION_ROOT') && APPLICATION_ROOT != dirname(__FILE__)) {
+                    error_log('const APPLICATION_ROOT is already in use... stake out! (APPLICATION_ROOT = ' . APPLICATION_ROOT . ')');
+                    die();
+                }
+                define('APPLICATION_ROOT', dirname(__FILE__));
+            }
+
 
             spl_autoload_register(array($this, '_autoLoad'), true, true);
         }

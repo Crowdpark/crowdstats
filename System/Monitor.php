@@ -44,6 +44,8 @@ namespace Crowdstats\System {
                 'ramTotal'        => $this->_ramTotal,
                 'ramUsed'         => $this->_ramUsed,
             );
+
+            return $this;
         }
 
         /**
@@ -82,9 +84,12 @@ namespace Crowdstats\System {
             }
         }
 
+        /**
+         * @return array
+         */
         public function getStats()
         {
-            return $this->_monitor;
+            return (array)$this->_monitor;
         }
     }
 }
