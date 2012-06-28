@@ -47,7 +47,7 @@ namespace Crowdstats\System {
         }
 
         /**
-         * Yeah... bad thing is, when profiling is running it will stop the profiling.
+         * Yeah... bad thing is when profiling is running it will stop the profiling.
          *
          * So use this function only at the very very end of your script.
          */
